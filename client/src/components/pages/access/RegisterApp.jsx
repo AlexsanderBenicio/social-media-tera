@@ -16,7 +16,7 @@ const RegisterApp = () => {
   }, []);
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetchData();
+    fetchData(fetchedData);
   };
 
   return (
