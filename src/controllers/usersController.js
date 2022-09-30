@@ -1,21 +1,21 @@
 const UserSchema = require("../models/userSchema");
 const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
+// const jwt = require("jsonwebtoken");
 
-const SECRET = process.env.SECRET;
+// const SECRET = process.env.SECRET;
 
 const getAll = (req, res) => {
-  const authHeader = req.get("authorization");
-  const token = authHeader.split(" ")[1];
-  if (!token) {
-    return res.status(401).send("Erro no Header");
-  }
+  // const authHeader = req.get("authorization");
+  // const token = authHeader.split(" ")[1];
+  // if (!token) {
+  //   return res.status(401).send("Erro no Header");
+  // }
 
-  jwt.verify(token, SECRET, (error) => {
-    if (error) {
-      res.status(401).send("Não autorizado");
-    }
-  });
+  // jwt.verify(token, SECRET, (error) => {
+  //   if (error) {
+  //     res.status(401).send("Não autorizado");
+  //   }
+  // });
   UserSchema.find(function (err, users) {
     if (err) {
       res.status(500).send({ message: err.message });
@@ -25,15 +25,13 @@ const getAll = (req, res) => {
 };
 
 const createUser = async (req, res) => {
-
-
   try {
     if (req.body.password != "") {
       const hashedPassword = bcrypt.hashSync(req.body.password, 10);
       req.body.password = hashedPassword;
-    }else{
+    } else {
       res.status(400).send({
-        message: "Usuário não criado."
+        message: "Usuário não criado.",
       });
     }
 

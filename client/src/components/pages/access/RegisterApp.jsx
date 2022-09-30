@@ -1,44 +1,74 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
+// import { useEffect } from "react";
 
 const RegisterApp = () => {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [fetchedData, setFetchedData] = useState("");
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const [status, setStatus] = useState({
+    type: true,
+    message: "",
+  });
 
   async function fetchData() {
-
-      
-      axios.post('http://localhost:8080/signup',
-      {
-        name: name,
-      email: email,
-      password: password}).then(({data})=>{
-        
+    axios
+      .post("http://localhost:8080/signup", {
+        name: user.name,
+        email: user.email,
+        password: user.password,
       })
-
+      .then(({ data }) => {
+        console.log(data);
+      })
+      .catch((error) => {
+        console.log("Erro ao cadastrar usuário", error);
+        setStatus({
+          type: false,
+          message: "Erro ao cadastrar usuário",
+        });
+      });
   }
-  useEffect(() => {
-    fetchData();
-  }, []);
+
+  const valueInput = (e) =>
+    setUser({ ...user, [e.target.name]: e.target.value });
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    fetchData(fetchedData);
+    fetchData();
+    setUser({
+      name: "",
+      email: "",
+      password: "",
+    });
+    if (user.name && user.email && user.password !== "") {
+      window.location.href = "/dashboard";
+    }
   };
 
   return (
     <div>
-      <form action="post">
+      <div>
+        <h1>Cadastre-se</h1>
+        {status.type === false ? (
+          <p style={{ color: "red" }}>{status.message}</p>
+        ) : (
+          ""
+        )}
+      </div>
+      <form action="post" onSubmit={handleSubmit}>
         <div>
           <label htmlFor="">Nome</label>
           <br />
           <input
             type="text"
             placeholder="Digite seu nome"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
+            value={user.name}
+            name="name"
+            onChange={valueInput}
           />
         </div>
         <div>
@@ -47,8 +77,9 @@ const RegisterApp = () => {
           <input
             type="email"
             placeholder="Digite seu nome"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            value={user.email}
+            name="email"
+            onChange={valueInput}
           />
         </div>
         <div>
@@ -57,12 +88,13 @@ const RegisterApp = () => {
           <input
             type="password"
             placeholder="Digite seu nome"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            value={user.password}
+            name="password"
+            onChange={valueInput}
           />
         </div>
         <div>
-          <button onClick={handleSubmit}>Registrar-se</button>
+          <button>Registrar-se</button>
         </div>
       </form>
     </div>
