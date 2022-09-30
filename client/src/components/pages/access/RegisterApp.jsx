@@ -8,12 +8,21 @@ const RegisterApp = () => {
   const [fetchedData, setFetchedData] = useState("");
 
   async function fetchData() {
-    const { data } = await axios.post("http://localhost:8080/signup");
-    setFetchedData(data);
+
+      
+      axios.post('http://localhost:8080/signup',
+      {
+        name: name,
+      email: email,
+      password: password}).then(({data})=>{
+        
+      })
+
   }
   useEffect(() => {
     fetchData();
   }, []);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     fetchData(fetchedData);

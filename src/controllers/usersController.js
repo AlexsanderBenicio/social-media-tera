@@ -25,12 +25,21 @@ const getAll = (req, res) => {
 };
 
 const createUser = async (req, res) => {
-  const hashedPassword = bcrypt.hashSync(req.body.password, 10);
-  req.body.password = hashedPassword;
-  try {
-    const newUser = new UserSchema(req.body);
-    const sevedUser = await newUser.save();
 
+
+  try {
+    if (req.body.password != "") {
+      const hashedPassword = bcrypt.hashSync(req.body.password, 10);
+      req.body.password = hashedPassword;
+    }else{
+      res.status(400).send({
+        message: "Usuário não criado."
+      });
+    }
+
+    let newUser = new UserSchema(req.body);
+    let sevedUser = await newUser.save();
+    sevedUser.password = undefined;
     res.status(201).send({
       message: "Usuário criado com sucesso",
       sevedUser,
