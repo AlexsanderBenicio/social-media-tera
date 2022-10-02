@@ -37,7 +37,6 @@ const createUser = async (req, res) => {
 
     let newUser = new UserSchema(req.body);
     let sevedUser = await newUser.save();
-    sevedUser.password = undefined;
     res.status(201).send({
       message: "Usuário criado com sucesso",
       sevedUser,

@@ -1,4 +1,6 @@
-import React from "react";
+import React, { useState, useContext } from "react";
+import { AuthContext } from "../../contexts/auth/AuthContext";
+import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
@@ -30,6 +32,40 @@ const bgColor = createTheme({
 });
 
 const LoginApp = () => {
+  const auth = useContext(AuthContext);
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+  });
+
+  const [status, setStatus] = useState({
+    type: true,
+    message: "",
+  });
+
+  const handleSubmit = async () => {
+    // e.preventDefault();
+    if (user.email && user.password) {
+      const isLogged = await auth.login(user.email, user.password);
+      if (isLogged) {
+        navigate("/dashboard");
+      } else {
+        setStatus({
+          type: false,
+          message: "Usuário não encontrado!",
+        });
+      }
+    }
+    setUser({
+      email: "",
+      password: "",
+    });
+  };
+
+  const valueInput = (e) =>
+    setUser({ ...user, [e.target.name]: e.target.value });
   return (
     <Box>
       <Grid>
@@ -38,8 +74,8 @@ const LoginApp = () => {
           sx={{
             backgroundColor: bgColor.palette.primary.light,
             paddingTop: 2,
-            height: "65vh",
-            width: 300,
+            height: "70vh",
+            width: 350,
             margin: "80px auto",
           }}
         >
@@ -54,8 +90,16 @@ const LoginApp = () => {
             <Avatar sx={{ backgroundColor: bgColor.palette.primary.dark }}>
               <LockOutlinedIcon />
             </Avatar>
-            <Typography variant="h4" sx={{ marginBottom: 2 }}>
+            <Typography
+              variant="h4"
+              sx={{ marginBottom: 2, textAlign: "center" }}
+            >
               Entrar
+              {status.type === false ? (
+                <p style={{ color: "red", fontSize: 15 }}>{status.message}</p>
+              ) : (
+                ""
+              )}
             </Typography>
           </Grid>
           <Grid
@@ -76,6 +120,9 @@ const LoginApp = () => {
                 fullWidth
                 required
                 type="email"
+                name="email"
+                value={user.email}
+                onChange={valueInput}
               />
             </Grid>
             <Grid sx={{ textAlign: "center", marginBottom: 1 }}>
@@ -87,6 +134,8 @@ const LoginApp = () => {
                 fullWidth
                 required
                 type="password"
+                name="password"
+                onChange={valueInput}
               />
             </Grid>
             <Grid>
@@ -103,6 +152,7 @@ const LoginApp = () => {
                 type="submit"
                 fullWidth
                 variant="contained"
+                onClick={handleSubmit}
               >
                 Entrar
               </Button>
@@ -114,7 +164,7 @@ const LoginApp = () => {
             </Grid>
             <Grid sx={{ marginTop: 1 }}>
               <Typography>
-                Já possui uma conta? <Link href="#">Faça o login</Link>
+                Não possui uma conta? <Link href="/signup">Cadastre-se</Link>
               </Typography>
             </Grid>
           </Grid>
