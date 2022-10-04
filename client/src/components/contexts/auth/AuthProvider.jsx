@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { useApi } from "../../../hooks/useAPI";
+import { useAPI } from "../../../hooks/useAPI";
 import { AuthContext } from "./AuthContext";
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const api = useApi();
+  const api = useAPI();
 
   const setToken = (token) => {
     localStorage.setItem("authToken", token);

@@ -4,7 +4,7 @@ const api = axios.create({
   baseURL: process.env.REACT_APP_API,
 });
 
-export const useApi = () => ({
+export const useAPI = () => ({
   validateToken: async (token) => {
     const response = await api.post("/login", { token });
     return response.data;
