@@ -32,26 +32,30 @@ const bgColor = createTheme({
 });
 
 const RegisterApp = () => {
-  const [user, setUser] = useState({
-    name: "",
-    email: "",
-    password: "",
-  });
+  const [name, setUserName] = useState("");
+  const [email, setUserEmail] = useState("");
+  const [password, setUserPassword] = useState("");
 
   const [status, setStatus] = useState({
     type: true,
     message: "",
   });
 
+  const handleUserInputChange = (event) => setUserName(event.target.value);
+  const handleEmailInputChange = (event) => setUserEmail(event.target.value);
+  const handlePasswordInputChange = (event) =>
+    setUserPassword(event.target.value);
+
   async function fetchData() {
     axios
       .post("http://localhost:8080/signup", {
-        name: user.name,
-        email: user.email,
-        password: user.password,
+        name: name,
+        email: email,
+        password: password,
       })
       .then(({ data }) => {
         console.log(data);
+        window.location.href = "/login";
       })
       .catch((error) => {
         console.log("Erro ao cadastrar usuário", error);
@@ -62,20 +66,11 @@ const RegisterApp = () => {
       });
   }
 
-  const valueInput = (e) =>
-    setUser({ ...user, [e.target.name]: e.target.value });
-
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (user.name && user.email && user.password !== "") {
+    if (name !== "" && email !== "" && password !== "") {
       fetchData();
-      window.location.href = "/login";
     }
-    setUser({
-      name: "",
-      email: "",
-      password: "",
-    });
   };
 
   return (
@@ -134,9 +129,8 @@ const RegisterApp = () => {
                 fullWidth
                 required
                 type="text"
-                name="name"
-                value={user.name}
-                onChange={valueInput}
+                value={name}
+                onChange={handleUserInputChange}
               />
             </Grid>
             <Grid sx={{ textAlign: "center", marginBottom: 1 }}>
@@ -148,9 +142,8 @@ const RegisterApp = () => {
                 fullWidth
                 required
                 type="email"
-                name="email"
-                value={user.email}
-                onChange={valueInput}
+                value={email}
+                onChange={handleEmailInputChange}
               />
             </Grid>
             <Grid sx={{ textAlign: "center", marginBottom: 1 }}>
@@ -162,9 +155,8 @@ const RegisterApp = () => {
                 fullWidth
                 required
                 type="password"
-                name="password"
-                value={user.password}
-                onChange={valueInput}
+                value={password}
+                onChange={handlePasswordInputChange}
               />
             </Grid>
             <Grid>
@@ -188,7 +180,7 @@ const RegisterApp = () => {
             </Grid>
             <Grid sx={{ marginTop: 1 }}>
               <Typography>
-                Já possui uma conta? <Link href="/login">Faça o login</Link>
+                Já possui uma conta? <Link to="/login">Faça o login</Link>
               </Typography>
             </Grid>
           </Grid>

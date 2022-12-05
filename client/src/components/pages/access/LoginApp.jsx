@@ -1,5 +1,4 @@
-import React, { useState, useContext } from "react";
-import { AuthContext } from "../../contexts/auth/AuthContext";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -31,14 +30,14 @@ const bgColor = createTheme({
   },
 });
 
-const LoginApp = () => {
-  const auth = useContext(AuthContext);
+const LoginApp = (props) => {
+  const [userEmail, setUserEmail] = useState("");
+  const [userPassword, setUserPassword] = useState("");
   const navigate = useNavigate();
 
-  const [user, setUser] = useState({
-    email: "",
-    password: "",
-  });
+  const handleUserInputChange = (event) => setUserEmail(event.target.value);
+  const handlePasswordInputChange = (event) =>
+    setUserPassword(event.target.value);
 
   const [status, setStatus] = useState({
     type: true,
@@ -47,10 +46,24 @@ const LoginApp = () => {
 
   const handleSubmit = async () => {
     // e.preventDefault();
-    if (user.email && user.password) {
-      const isLogged = await auth.login(user.email, user.password);
-      if (isLogged) {
+    const object = JSON.stringify({
+      email: userEmail,
+      password: userPassword,
+    });
+    if (userEmail && userPassword) {
+      const isLogged = await fetch("http://localhost:8080/login", {
+        method: "post",
+        body: object,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      const retorno = await isLogged.json();
+
+      if (retorno.token) {
         navigate("/dashboard");
+        localStorage.setItem("token", retorno.token);
       } else {
         setStatus({
           type: false,
@@ -58,14 +71,7 @@ const LoginApp = () => {
         });
       }
     }
-    setUser({
-      email: "",
-      password: "",
-    });
   };
-
-  const valueInput = (e) =>
-    setUser({ ...user, [e.target.name]: e.target.value });
   return (
     <Box>
       <Grid>
@@ -120,9 +126,8 @@ const LoginApp = () => {
                 fullWidth
                 required
                 type="email"
-                name="email"
-                value={user.email}
-                onChange={valueInput}
+                value={userEmail}
+                onChange={handleUserInputChange}
               />
             </Grid>
             <Grid sx={{ textAlign: "center", marginBottom: 1 }}>
@@ -134,8 +139,8 @@ const LoginApp = () => {
                 fullWidth
                 required
                 type="password"
-                name="password"
-                onChange={valueInput}
+                value={userPassword}
+                onChange={handlePasswordInputChange}
               />
             </Grid>
             <Grid>
@@ -159,12 +164,12 @@ const LoginApp = () => {
             </Grid>
             <Grid sx={{ marginTop: 1 }}>
               <Typography>
-                <Link href="#">Esqueceu a senha?</Link>
+                <Link to="#">Esqueceu a senha?</Link>
               </Typography>
             </Grid>
             <Grid sx={{ marginTop: 1 }}>
               <Typography>
-                Não possui uma conta? <Link href="/signup">Cadastre-se</Link>
+                Não possui uma conta? <Link to="/signup">Cadastre-se</Link>
               </Typography>
             </Grid>
           </Grid>
